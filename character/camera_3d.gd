@@ -6,10 +6,12 @@ extends Camera3D
 @export var zoom_speed := 1
 @export var smooth_speed := 10
 
+var snapping := false
+const step := PI / 4.0
 var yaw := 0.0
 var pitch := 0.0
 var rotating := false
-	
+
 enum CameraMode {NORMAL, FIRSTPERSON}
 @export var shiftlocked:bool = false
 @export var mode: CameraMode = CameraMode.NORMAL
@@ -26,6 +28,16 @@ func _ready():
 	target_distance = distance
 
 func _input(event):
+	if Input.is_action_just_pressed("left_align"):
+		var step_index = round(yaw / step)
+		step_index += 1
+		yaw = wrapf(step_index * step, -PI, PI)
+		snapping = true
+	if Input.is_action_just_pressed("right_align"):
+		var step_index = round(yaw / step)
+		step_index -= 1
+		yaw = wrapf(step_index * step, -PI, PI)
+		snapping = true
 	if Input.is_action_just_pressed("shift_lock"):
 		shiftlocked = !shiftlocked
 	if not shiftlocked:
@@ -65,8 +77,10 @@ func _input(event):
 func _process(delta):
 	if target == null:
 		return
-	yaw += Input.get_axis("look_left","look_right")*delta
-	
+	if not snapping:
+		yaw += Input.get_axis("look_left","look_right") * delta
+	else:
+		snapping = false
 	var max_desired_pos = target.get_node("Focus").global_position + global_basis.z*target_distance
 	
 	ray.target_position = ray.to_local(max_desired_pos)
