@@ -21,7 +21,7 @@ func _ready():
 		pass)
 	Engine.max_fps = int(data.maxFPS)
 	
-	CharacterAdded.connect(func(new:Player):
+	CharacterAdded.connect(func(new):
 		var rand = get_tree().get_nodes_in_group("SpawnLocation").pick_random()
 		new.global_position = rand.global_position + Vector3(0,1,0)
 		print("loaded character")

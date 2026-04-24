@@ -5,7 +5,6 @@ extends Node2D
 @onready var cam:Camera2D = $Camera2D
 
 func _ready():
-	print("ready")
 	pass
 
 func _on_play_pressed() -> void:

@@ -1,6 +1,6 @@
 extends Camera3D
 
-@export var target: Player
+@export var target: PlayerClass
 @export var distance := 10.0
 @export var max_distance := 20.0
 @export var zoom_speed := 1

@@ -1,24 +1,29 @@
 [gd_scene format=3 uid="uid://b8q02e5g57tx4"]
 
-[ext_resource type="Script" uid="uid://ypneyahtpnck" path="res://scripts/classes/player.gd" id="1_monf5"]
-[ext_resource type="Script" path="res://scripts/classes/camera_3d.gd" id="3_aypkh"]
+[ext_resource type="Script" uid="uid://cvsf488fpjbix" path="res://scripts/classes/player.gd" id="1_monf5"]
+[ext_resource type="Script" uid="uid://5pbiggcq3lln" path="res://scripts/classes/camera_3d.gd" id="3_aypkh"]
 [ext_resource type="PackedScene" uid="uid://bjm53ewdgx7et" path="res://assets/prefabs/models/character_model.tscn" id="3_rx3f5"]
-
-[sub_resource type="GDScript" id="GDScript_aypkh"]
-script/source = "extends RayCast3D
-"
+[ext_resource type="Script" uid="uid://ypneyahtpnck" path="res://scripts/classes/StateHandler/StateMachine.gd" id="4_31h25"]
+[ext_resource type="Script" uid="uid://c7ypwlbpntcyb" path="res://scripts/classes/StateHandler/states/Balancing.gd" id="5_mr5rw"]
+[ext_resource type="Script" uid="uid://dqyppesur67h7" path="res://scripts/classes/StateHandler/states/InAir.gd" id="6_bwtit"]
+[ext_resource type="Script" uid="uid://cnj8j7cbr4ruf" path="res://scripts/classes/StateHandler/states/Grounded.gd" id="7_nf5u3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hhoun"]
 size = Vector3(0.8, 1.14, 0.2)
 
-[node name="Player" type="CharacterBody3D" unique_id=1574667455]
-floor_max_angle = 1.553343
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_rx3f5"]
+points = PackedVector3Array(-0.52889997, -0.5288999, -0.5288999, 0.52889514, 0.52889997, 0.52889997, 0.52889514, 0.52889997, -0.52889997, 0.52889514, -0.52889997, 0.52889997, -0.52889997, 0.5288999, 0.5288999, 0.52889514, -0.52889997, -0.52889997, -0.52889997, 0.5288999, -0.5288999, -0.52889997, -0.5288999, 0.5288999)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_6oh7q"]
+points = PackedVector3Array(-0.52889997, -0.5288999, -0.5288999, 0.52889514, 0.52889997, 0.52889997, 0.52889514, 0.52889997, -0.52889997, 0.52889514, -0.52889997, 0.52889997, -0.52889997, 0.5288999, 0.5288999, 0.52889514, -0.52889997, -0.52889997, -0.52889997, 0.5288999, -0.5288999, -0.52889997, -0.5288999, 0.5288999)
+
+[node name="Player" type="RigidBody3D" unique_id=850915531]
+inertia = Vector3(1, 1, 1)
 script = ExtResource("1_monf5")
-jump_up_force = 7.2
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=335641631 node_paths=PackedStringArray("target")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.1, 1, 0.1)
-top_level = true
+current = true
 script = ExtResource("3_aypkh")
 target = NodePath("..")
 
@@ -26,7 +31,6 @@ target = NodePath("..")
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.14000005, 0.1)
 target_position = Vector3(0, -0.1, 0)
 hit_back_faces = false
-script = SubResource("GDScript_aypkh")
 
 [node name="Area3D" type="Area3D" parent="." unique_id=1539000716]
 
@@ -46,37 +50,74 @@ hit_back_faces = false
 
 [node name="LegCast" type="RayCast3D" parent="LegCasts" unique_id=458650783]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2.2, 0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast2" type="RayCast3D" parent="LegCasts" unique_id=716106670]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2.2, -0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast3" type="RayCast3D" parent="LegCasts" unique_id=753934756]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.2, 0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast6" type="RayCast3D" parent="LegCasts" unique_id=1107235148]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.2, -0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast4" type="RayCast3D" parent="LegCasts" unique_id=193337061]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast7" type="RayCast3D" parent="LegCasts" unique_id=975582971]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast8" type="RayCast3D" parent="LegCasts" unique_id=1419673477]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="LegCast5" type="RayCast3D" parent="LegCasts" unique_id=1472965775]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.2, -0.5)
-target_position = Vector3(0, -2.184, 0)
+target_position = Vector3(0, -2.28, 0)
+hit_back_faces = false
 
 [node name="Character" parent="." unique_id=1573106910 instance=ExtResource("3_rx3f5")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2.922, 0)
+
+[node name="TorsoCollision" type="CollisionShape3D" parent="." unique_id=1981596858]
+transform = Transform3D(1.582836e-07, -3.8250494e-08, -0.25211108, -7.285818e-09, 0.5042222, -1.9125249e-08, 0.50422215, 7.28583e-09, 7.91418e-08, -0.00196667, 0.20394073, 3.8292436e-10)
+shape = SubResource("ConvexPolygonShape3D_rx3f5")
+
+[node name="HeadCollision" type="CollisionShape3D" parent="." unique_id=715826341]
+transform = Transform3D(0.25211108, 3.64291e-09, 2.0759853e-23, -3.64291e-09, 0.25211108, -4.2920138e-15, -8.277784e-23, 4.2920138e-15, 0.25211108, 0, 0.12706679, 0.0019666653)
+shape = SubResource("ConvexPolygonShape3D_6oh7q")
+
+[node name="StateMachine" type="Node" parent="." unique_id=1727663946 node_paths=PackedStringArray("state")]
+script = ExtResource("4_31h25")
+state = NodePath("Balancing")
+metadata/_custom_type_script = "uid://ypneyahtpnck"
+
+[node name="Balancing" type="Node" parent="StateMachine" unique_id=786869794]
+script = ExtResource("5_mr5rw")
+kP = 2500.0
+kD = 100.0
+metadata/_custom_type_script = "uid://c7ypwlbpntcyb"
+
+[node name="InAir" type="Node" parent="StateMachine/Balancing" unique_id=1104173307]
+script = ExtResource("6_bwtit")
+metadata/_custom_type_script = "uid://dqyppesur67h7"
+
+[node name="Grounded" type="Node" parent="StateMachine/Balancing" unique_id=93494549]
+script = ExtResource("7_nf5u3")
+kP = 900.0
+kD = 60.0
+metadata/_custom_type_script = "uid://cnj8j7cbr4ruf"
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

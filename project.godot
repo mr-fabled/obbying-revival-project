@@ -42,6 +42,7 @@ folder_colors={
 "res://scenes/": "orange",
 "res://scripts/autoload/": "purple",
 "res://scripts/classes/": "yellow",
+"res://scripts/classes/StateHandler/": "pink",
 "res://scripts/gui/": "green"
 }
 
@@ -144,6 +145,7 @@ right_align={
 
 [physics]
 
+common/physics_ticks_per_second=240
 3d/physics_engine="Jolt Physics"
 3d/default_gravity=24.0
 
