@@ -9,6 +9,7 @@
 
 [node name="EscMenu" type="Control" unique_id=1769971828]
 process_mode = 3
+z_index = 999
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -150,7 +150,8 @@ right_align={
 
 common/physics_ticks_per_second=240
 3d/physics_engine="Jolt Physics"
-3d/default_gravity=24.0
+jolt_physics_3d/collisions/collision_margin_fraction=0.18245
+3d/default_gravity=52.0
 
 [rendering]
 

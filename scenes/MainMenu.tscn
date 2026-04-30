@@ -53,7 +53,7 @@ void fragment() {
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7la6k"]
 shader = SubResource("Shader_8a8k8")
 shader_parameter/star_density = 0.5
-shader_parameter/elapsed_time = 1017.732016278498
+shader_parameter/elapsed_time = 1059.621318500685
 shader_parameter/direction = Vector2(-1, 0)
 
 [sub_resource type="GDScript" id="GDScript_ucygd"]
@@ -133,16 +133,16 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -1261.0
-offset_top = -706.0
-offset_right = 11539.0
-offset_bottom = 6494.0
+offset_left = -1401.0
+offset_top = -755.0
+offset_right = 11399.0
+offset_bottom = 6445.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 script = SubResource("GDScript_ucygd")
-elapsed_time = 1017.732016278498
+elapsed_time = 1059.621318500685
 
 [node name="Settings" type="Node2D" parent="." unique_id=132079008]
 position = Vector2(1300, 0)

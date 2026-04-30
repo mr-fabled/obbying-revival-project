@@ -1,7 +1,7 @@
 extends Node
 class_name State
 
-@export var state_machine:StateMachine
+@export var humanoid:Humanoid
 @export var player: PlayerClass
 
 # When the hum enters the state

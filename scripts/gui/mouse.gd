@@ -6,6 +6,12 @@ var last_pos:Vector2
 var last_rotating = false
 
 func _process(_delta: float) -> void:
+	if get_tree().paused:
+		if not Input.mouse_mode == Input.MOUSE_MODE_HIDDEN:
+			Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+		global_position = get_global_mouse_position()
+		return
+	
 	var is_first_person = false
 	var rotating = false
 	var v_size = Vector2(get_viewport().size.x,get_viewport().size.y)

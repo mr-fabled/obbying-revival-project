@@ -1,20 +1,20 @@
 extends State
 class_name BalancingState
 
-@export var kP:float = 2250.0
-@export var kD:float = 50.0
+@export var kP:float = 7000
+@export var kD:float = 100.0
 
-var grounded_state:GroundedState
-var in_air_state:InAirState
+var running_base_state:RunningBaseState
+var falling_base_state:FallingBaseState
 
 var warning_pushed = false
 
 func _ready():
-	grounded_state = find_children("*","GroundedState")[0]
-	in_air_state = find_children("*","InAirState")[0]
+	running_base_state = find_children("*","RunningBaseState")[0]
+	falling_base_state = find_children("*","FallingBaseState")[0]
 	
 func physics_update(_dt:float):
-	if !grounded_state or !in_air_state: 
+	if !running_base_state or !falling_base_state: 
 		if !warning_pushed: push_warning("Setup is incorrect, no grounded/inair state added")
 		return
 	
@@ -32,10 +32,21 @@ func physics_update(_dt:float):
 	
 	var applied_torque:Vector3 = root_basis*torqueLocal
 	applied_torque.y = 0
-	
 	player.apply_torque(applied_torque)
 	
-	if player.grounded and !state_machine.is_state_active(grounded_state):
-		state_machine.ChangeState.emit(grounded_state)
-	elif !player.grounded and !state_machine.is_state_active(in_air_state):
-		state_machine.ChangeState.emit(in_air_state)
+	if player.rotation_locked:
+		var target_angle = player.cam.rotation.y + PI
+		var current_angle = player.global_basis.get_euler(EULER_ORDER_YXZ).y
+		var angle_diff = wrapf(target_angle - current_angle, -PI, PI)
+
+		# PD controller — tune these to feel like Roblox
+		# High kP_yaw = snappy (Roblox is very snappy), kD_yaw damps oscillation
+		var kP_yaw = 28000.0
+		var kD_yaw = 400.0
+		var y_torque = kP_yaw * angle_diff * player.inertia.y - kD_yaw * player.angular_velocity.y * player.inertia.y
+		player.apply_torque(Vector3(0, y_torque, 0))
+	
+	if player.grounded:
+		humanoid._internal_change_state(self,running_base_state)
+	else:
+		humanoid._internal_change_state(self,falling_base_state)

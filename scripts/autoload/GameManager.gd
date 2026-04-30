@@ -1,7 +1,6 @@
 extends Node
 
 @onready var window = get_window()
-@onready var timer = Timer.new()
 
 @export var data:PlayerData = PlayerData.new()
 signal DataLoaded
@@ -12,21 +11,7 @@ signal CharacterAdded(Player)
 
 const TARGETRATIO = 16.0/9.0
 
-func _on_window_size_changed():
-	timer.start()
-
-func _correct_window():
-	var current_size = window.size
-	var new_height = int(current_size.x / TARGETRATIO)
-	window.size = Vector2i(current_size.x, new_height)
-
 func _ready():
-	timer.one_shot = true
-	timer.wait_time = .2
-	timer.timeout.connect(_correct_window)
-	add_child(timer)
-	window.size_changed.connect(_on_window_size_changed)
-	
 	# Window + Mouse Setup
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	get_window().mode = Window.MODE_WINDOWED
@@ -50,7 +35,6 @@ func _ready():
 	CharacterAdded.connect(func(new):
 		var rand = get_tree().get_nodes_in_group("SpawnLocation").pick_random()
 		new.global_position = rand.global_position + Vector3(0,1,0)
-		print("loaded character")
 		pass)
 	
 func _notification(what: int) -> void:
