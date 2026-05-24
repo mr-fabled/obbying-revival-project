@@ -26,10 +26,14 @@ func load_level(path):
 
 
 
-func addCheckpoint(pos: Vector3, rot: Vector3, vel: Vector3):
+func addCheckpoint(pos: Vector3, rot: Vector3, vel: Vector3, cam_mode: int, cam_transform: Transform3D, shiftlock: bool):
 	if GameManager.alljump:
 		var newcheckpoint = checkpoint.instantiate()
 		newcheckpoint.set_meta("saved_velocity", vel)
+		
+		newcheckpoint.set_meta("camera_mode", cam_mode)
+		newcheckpoint.set_meta("camera_transform", cam_transform)
+		newcheckpoint.set_meta("shiftlocked", shiftlock)
 		
 		add_child(newcheckpoint)
 		newcheckpoint.position = pos + Vector3(0,1,0)
@@ -174,8 +178,12 @@ func spawn_node(node_data):
 		spawn_node(child)
 
 func _input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed("addCheckpoint"):
-		addCheckpoint(player.position, player.rotation, player.velocity)
+	if Input.is_action_just_pressed("addCheckpoint") and player != null:
+		var current_cam_mode = player.cam.mode
+		var current_cam_transform = player.cam.global_transform
+		var current_shiftlock = GameManager.shiftlocked
+		
+		addCheckpoint(player.position, player.rotation, player.velocity, current_cam_mode, current_cam_transform, current_shiftlock)
 	if Input.is_action_just_pressed("removeCheckpoint"):
 		removeLastCheckpoint()
 
