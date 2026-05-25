@@ -1,6 +1,7 @@
 extends Node3D
 
 @onready var part = preload("res://assets/prefabs/building/Old/Part.tscn")
+@onready var cylinder = preload("res://assets/prefabs/building/Old/cylinder.tscn")
 @onready var truss = preload("res://assets/prefabs/building/Old/Truss.tscn")
 @onready var player = $Player
 
@@ -123,6 +124,36 @@ func addPart(pos, rot_deg, size, classname, color):
 		spawn_point = newpart
 		newpart.name = "Spawn"
 
+func addCylinder(pos, rot_deg, size, color):
+	var newcyl = cylinder.instantiate()
+	add_child(newcyl)
+	var mesh = newcyl.get_node("MeshInstance3D") as MeshInstance3D
+	var coll = newcyl.get_node("CollisionShape3D")
+	newcyl.position = pos
+	var rot_rad = Vector3(
+		deg_to_rad(rot_deg.x),
+		deg_to_rad(rot_deg.y),
+		deg_to_rad(rot_deg.z)
+	)
+	newcyl.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
+	if coll.shape:
+		coll.shape = coll.shape.duplicate()
+		var shape = coll.shape as CylinderShape3D
+		if shape:
+			# after Z: 90 rotation, the Y axis is now pointing along X in world space
+			shape.radius = size.y / 2.0
+			shape.height = size.x
+	if mesh.mesh:
+		mesh.mesh = mesh.mesh.duplicate()
+		var cyl_mesh = mesh.mesh as CylinderMesh
+		if cyl_mesh:
+			cyl_mesh.top_radius 	= size.y / 2.0
+			cyl_mesh.bottom_radius  = size.y / 2.0
+			cyl_mesh.height 		= size.x
+			
+		if mesh.mesh.material:
+			mesh.mesh.material = mesh.mesh.material.duplicate()
+			mesh.mesh.material.set_shader_parameter("base_color", color)
 
 func addTruss(pos, rot_deg, size, _classname):
 	var newtruss = truss.instantiate()
@@ -148,13 +179,24 @@ func spawn_node(node_data):
 
 	if classname == "Part":
 		var p = node_data.get("Properties", {})
-		addPart(
-			to_vec3(p.get("Position")),
-			to_vec3(p.get("Rotation")),
-			to_vec3(p.get("Size")),
-			"Part",
-			to_color(p.get("Color"))
-		)
+		# TODO modify the exporter so that it stores the shape of the object in data
+		var shape = node_data.get("Shape", "Block")
+
+		if shape == "Cylinder":
+			addCylinder(
+				to_vec3(p.get("Position")),
+				to_vec3(p.get("Rotation")),
+				to_vec3(p.get("Size")), # don't accept cylindrical spawns
+				to_color(p.get("Color"))
+			)
+		else:
+			addPart(
+				to_vec3(p.get("Position")),
+				to_vec3(p.get("Rotation")),
+				to_vec3(p.get("Size")),
+				"Part",
+				to_color(p.get("Color"))
+			)
 
 	elif classname == "Spawn":
 		var p = node_data.get("Properties", {})
