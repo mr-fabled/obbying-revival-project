@@ -174,7 +174,7 @@ func addWedge(pos, rot_deg, size, color):
 		deg_to_rad(corrected_rot.z)
 	)
 	# transforming the vertices of the origin to the player's vertices
-	var basis = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
+	var basis_ = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
 	
 	var h = max(size.y, 0.001)
 	var w = max(size.x, 0.001)
@@ -197,7 +197,7 @@ func addWedge(pos, rot_deg, size, color):
 	])
 	var final_vertices = PackedVector3Array()
 	for vert in origin_vertices:
-		final_vertices.append(basis * vert)
+		final_vertices.append(basis_ * vert)
 		
 	if coll.shape:
 		var shape = ConvexPolygonShape3D.new()
