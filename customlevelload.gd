@@ -102,7 +102,7 @@ func addPart(pos, rot_deg, size, classname, color):
 		deg_to_rad(rot_deg.y),
 		deg_to_rad(rot_deg.z)
 	)
-	newpart.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
+	newpart.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_XYZ)
 	if coll.shape:
 		coll.shape = coll.shape.duplicate() 
 		var shape = coll.shape as BoxShape3D
@@ -134,20 +134,19 @@ func addCylinder(pos, rot_deg, size, color):
 		deg_to_rad(rot_deg.y),
 		deg_to_rad(rot_deg.z)
 	)
-	newcyl.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
+	newcyl.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_XYZ)
 	if coll.shape:
 		coll.shape = coll.shape.duplicate()
 		var shape = coll.shape as CylinderShape3D
 		if shape:
-			# after Z: 90 rotation, the Y axis is now pointing along X in world space
-			shape.radius = size.y / 2.0
+			shape.radius = min(size.z, size.y) / 2.0
 			shape.height = size.x
 	if mesh.mesh:
 		mesh.mesh = mesh.mesh.duplicate()
 		var cyl_mesh = mesh.mesh as CylinderMesh
 		if cyl_mesh:
-			cyl_mesh.top_radius 	= size.y / 2.0
-			cyl_mesh.bottom_radius  = size.y / 2.0
+			cyl_mesh.top_radius 	= min(size.z, size.y) / 2.0
+			cyl_mesh.bottom_radius  = min(size.z, size.y) / 2.0
 			cyl_mesh.height 		= size.x
 			
 		if mesh.mesh.material:
@@ -160,22 +159,14 @@ func addWedge(pos, rot_deg, size, color):
 	var mesh = newwedge.get_node("MeshInstance3D") as MeshInstance3D
 	var coll = newwedge.get_node("CollisionShape3D")
 	newwedge.position = pos
-	
-	# to specifically fix one practical edge case
-	var corrected_rot = rot_deg
-	if rot_deg.x == 90 and rot_deg.z == 180:
-		corrected_rot = Vector3(-90, rot_deg.y, rot_deg.z)
-	elif rot_deg.x == -90 and rot_deg.z == 180:
-		corrected_rot = Vector3(90, rot_deg.y, rot_deg.z)
-		
 	var rot_rad = Vector3(
-		deg_to_rad(corrected_rot.x),
-		deg_to_rad(corrected_rot.y),
-		deg_to_rad(corrected_rot.z)
+		deg_to_rad(rot_deg.x),
+		deg_to_rad(rot_deg.y),
+		deg_to_rad(rot_deg.z)
 	)
 	# transforming the vertices of the origin to the player's vertices
-	var basis_ = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
-	
+	var basis_ = Basis.from_euler(rot_rad, EULER_ORDER_XYZ)
+
 	var h = max(size.y, 0.001)
 	var w = max(size.x, 0.001)
 	var l = max(size.z, 0.001)
@@ -237,7 +228,7 @@ func addBall(pos, rot_deg, size, color):
 		deg_to_rad(rot_deg.y),
 		deg_to_rad(rot_deg.z)
 	)
-	newball.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
+	newball.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_XYZ)
 	if coll.shape:
 		coll.shape = coll.shape.duplicate()
 		var shape = coll.shape as SphereShape3D
@@ -267,7 +258,7 @@ func addTruss(pos, rot_deg, size, _classname):
 		deg_to_rad(rot_deg.y),
 		deg_to_rad(rot_deg.z)
 	)
-	newtruss.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_ZXY)
+	newtruss.transform.basis = Basis.from_euler(rot_rad, EULER_ORDER_XYZ)
 	if coll.shape:
 		coll.shape = coll.shape.duplicate()
 		var shape = coll.shape as BoxShape3D
