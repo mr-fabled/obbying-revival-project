@@ -644,6 +644,8 @@ transform = Transform3D(1, 0, 0, 0, 6, 0, 0, 0, 2.5, 6.5012093, 1.6393604, -19.4
 transform = Transform3D(1, 0, 0, 0, 4, 0, 0, 0, 2, 3.854906, 0.5, -21.75)
 
 [node name="EscMenu" parent="." unique_id=1769971828 instance=ExtResource("13_h6smj")]
+offset_top = 720.0
+offset_bottom = 720.0
 
 [node name="Timer" parent="." unique_id=1938707771 instance=ExtResource("13_v5j5c")]
 mouse_filter = 2
