@@ -9,6 +9,13 @@ local function serializeInstance(obj)
 	
 	local className = obj.ClassName
 	local shape = if obj:IsA("Part") then obj.Shape.Name else "Block"
+    if obj:IsA("WedgePart") then
+        className = "Part"
+        shape = "Wedge"
+    elseif obj:IsA("CornerWedgePart") then
+        className = "Part"
+        shape = "CornerWedge"
+    end
 
 	if obj.Name == "SpawnLocation" then
 		className = "Spawn"
