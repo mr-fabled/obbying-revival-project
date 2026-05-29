@@ -289,25 +289,6 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("ResetAlt") and GameManager.RToggle:
 		reset()
-		
-	if Input.is_action_just_pressed("ui_accept"):
-		if is_climbing:
-			var backward_dir = global_transform.basis.z
-			var knockback_dir = Vector3(-backward_dir.x, 0, -backward_dir.z).normalized()
-			
-			velocity.x = knockback_dir.x * jump_off_force * 2.0
-			velocity.z = knockback_dir.z * jump_off_force * 2.0
-			velocity.y = JUMP_VELOCITY * jump_up_force
-			
-			is_climbing = false
-			climb_normal = Vector3.ZERO
-			just_jumped_off = true
-			
-			knockback_timer = 0.2
-			jump_lock = 0.125
-
-	if position.y <= -voidDepth:
-		reset()
 
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	
@@ -317,7 +298,11 @@ func _physics_process(delta: float) -> void:
 
 	var direction = (right * input_dir.x + forward * input_dir.y).normalized()
 
+	if position.y <= -voidDepth:
+		reset()
+
 	if is_climbing:
+		
 		velocity -= climb_normal * 6.0 * delta # attaching player to truss
 		
 		# leave truss when feet touch ground
@@ -358,7 +343,7 @@ func _physics_process(delta: float) -> void:
 			climb_input = sign(climb_input)
 
 		velocity.y = climb_input * climb_speed
-		
+
 		# from 0-1, the closer to 1 the stricter your camera needs to be straight to glide (fixes gliding backward accidentally)
 		var looking_from_behind : float = abs(camf.dot(climb_normal))
 		
@@ -373,7 +358,28 @@ func _physics_process(delta: float) -> void:
 			climb_input == 0,
 			"Up" if climb_input > 0 else "Down" if climb_input < 0 else "Idle"
 		)
+		
+		if Input.is_action_pressed("ui_accept") and knockback_timer <= 0:
+			var backward_dir = global_transform.basis.z
+			var knockback_dir = Vector3(-backward_dir.x, 0, -backward_dir.z).normalized()
 			
+			# Truss momentum logic
+			
+			velocity.x = knockback_dir.x * jump_off_force * (2.0 - climb_input/2) # If climbing UP: 2 - 1/2
+			velocity.z = knockback_dir.z * jump_off_force * (2.0 - climb_input/2) # If climbing DOWN: 2 + 1/2
+
+			velocity.y = JUMP_VELOCITY * ((0.1*climb_input) + jump_up_force) # UP: 0.1 + 1.1; DOWN: 0.1 - 1.1; NEUTRAL: 1.1
+			# (0.1*climb_input)-0.1 could be implemented instead but im assuming you want default jump off force to be 1.1
+			
+			
+			
+			
+			is_climbing = false
+			climb_normal = Vector3.ZERO
+			just_jumped_off = true
+			
+			knockback_timer = 0.2
+			jump_lock = 0.125
 	else:
 		if knockback_timer > 0.0:
 			knockback_timer -= delta
